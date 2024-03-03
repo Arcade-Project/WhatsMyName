@@ -11,36 +11,23 @@ else:
     print({"error": "invalid argument"})
     sys.exit()
 
-file = open("log.txt", "r+")
-file.truncate(0)
-file.close()
-
 headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
 }
 
 
-def write_logs(str, e):
-    with open("log.txt", "a") as f:
-        f.write(f"{str} {e}\n")
-
-
 def requestsCheck(
-    current_state,
-    total_url,
-    percentage,
     e_string,
     m_string,
     formatted_url,
+    semaphore,
 ):
+    global current_state
+    global total_url
     try:
         response = session.get(formatted_url, headers=headers, timeout=2)
-    except Exception as e:
-        if "timeout" in str(e) or "timed out" in str(e):
-            timeout_url.append(formatted_url)
-        else:
-            write_logs(formatted_url + " ==>", e)
-            # print(f"{str(e)[:150]} {formatted_url}")
+    except Exception:
+        semaphore.release()
         return
     else:
         status_code = response.status_code
@@ -50,87 +37,70 @@ def requestsCheck(
                 reply = f"Found: {formatted_url}"
                 found = True
                 if m_string in decoded_html:
-                    reply = f"False Positive: {formatted_url}"
                     found = False
                 if found:
                     print(Fore.GREEN + reply + Style.RESET_ALL)
                     global found_counter
                     found_counter += 1
-                # else:
-                #     print(Fore.RED + reply)
-    # Back.BLACK
-    # + f"Progress: {current_state}/{total_url} ({percentage:.2f}%)"
-    # + Style.RESET_ALL,
     print(
-        f"Progress: {current_state}/{total_url} ({percentage:.2f}%)     ",
+        f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%)     ",
         end="\r",
         flush=True,
     )
+    semaphore.release()
 
+
+def main(uri_checks):
+    global current_state
+    for site in uri_checks:
+        current_state += 1
+        url = site.get("uri_check")
+        e_string = site.get("e_string")
+        m_string = site.get("m_string")
+
+        formatted_url = url.format(account=account)
+
+        semaphore.acquire()
+        thread = threading.Thread(
+            target=requestsCheck,
+            args=(
+                e_string,
+                m_string,
+                formatted_url,
+                semaphore,
+            ),
+        )
+        threads.append(thread)
+        thread.start()
+
+
+# def global variable
+found_counter = 0
+current_state = 0
+
+threads = []
+semaphore = threading.Semaphore(30)
 
 with open("wmn-data.json") as f:
     data = json.load(f)
 
 uri_checks = data.get("sites", [])
-
-global found_counter
-found_counter = 0
-
-timeout_url = []
-threads = []
-total_url = 0
-
-for i in uri_checks:
-    total_url += 1
-current_state = 0
+total_url = len(uri_checks)
 
 init()  # Init for colorama
 
 # start
 start_time = time.time()
 
-with requests.Session() as session:
-    for site in uri_checks:
-        current_state += 1
-        percentage = (current_state / total_url) * 100
-        url = site.get("uri_check")
-        e_string = site.get("e_string")
-        m_string = site.get("m_string")
-
-        # to test if data is True
-        account = site.get("known")
-        account = account[0]
-
-        formatted_url = url.format(account=account)
-
-        while True:
-
-            if len(threads) < 29:
-                thread = threading.Thread(
-                    target=requestsCheck,
-                    args=(
-                        current_state,
-                        total_url,
-                        percentage,
-                        e_string,
-                        m_string,
-                        formatted_url,
-                    ),
-                )
-                threads.append(thread)
-                thread.start()
-                break
-            else:
-                for thread in threads:
-                    thread.join()
-                threads = []
-
+if __name__ == "__main__":
+    with requests.Session() as session:
+        main(uri_checks)
 
 for thread in threads:
     thread.join()
+
 end_time = time.time()
 execution_time = end_time - start_time
-# print(timeout_url)
 
 print(
     "",

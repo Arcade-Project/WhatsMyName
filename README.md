@@ -1,7 +1,10 @@
 ## WMN ARC DB
 
-- [ ] make better error code
+- [ ] function to update wmn-data.json
+- [ ] fix progress bug
+- [ ] make better error code no lol
 - [x] use also m_string to verify url
 - [x] multiThreading with threading
-- [ ] update function
-
+- [x] update function
+- [x] opti threading
+- [x] opti requests
