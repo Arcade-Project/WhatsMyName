@@ -24,10 +24,12 @@ def requestsCheck(
 ):
     global current_state
     global total_url
+    global last_print
     try:
         response = session.get(formatted_url, headers=headers, timeout=2)
     except Exception:
         semaphore.release()
+        current_state += 1
         return
     else:
         status_code = response.status_code
@@ -39,21 +41,24 @@ def requestsCheck(
                 if m_string in decoded_html:
                     found = False
                 if found:
-                    print(Fore.GREEN + reply + Style.RESET_ALL)
+                    print('\r' + ' ' * len(last_print), end='\r', flush=True)
+                    print(Fore.GREEN + reply + Style.RESET_ALL, end="\n")
                     global found_counter
                     found_counter += 1
+    advance = f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%)"
+    last_print = advance
     print(
-        f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%)     ",
+        advance,
         end="\r",
         flush=True,
     )
     semaphore.release()
+    current_state += 1
+
 
 
 def main(uri_checks):
-    global current_state
     for site in uri_checks:
-        current_state += 1
         url = site.get("uri_check")
         e_string = site.get("e_string")
         m_string = site.get("m_string")
@@ -75,6 +80,7 @@ def main(uri_checks):
 
 
 # def global variable
+last_print = ''
 found_counter = 0
 current_state = 0
 
