@@ -1,6 +1,7 @@
 ## WMN ARC DB
 
 - [ ] function to update wmn-data.json
+- [ ] argparse
 - [x] fix progress bug
 - [ ] make better error code (no lol)
 - [x] use also m_string to verify url

@@ -1,15 +1,59 @@
-import sys
 import json
 import time
+import argparse
 import requests
 import threading
 from colorama import init, Back, Fore, Style
 
-if len(sys.argv) > 1:
-    account = sys.argv[1]
-else:
-    print({"error": "invalid argument"})
-    sys.exit()
+parser = argparse.ArgumentParser(description="WhatsMyName for ARCADE-DB")
+# parser.add_argument('--output', '-o', action='store_true', help='Activer la sortie verbosité')
+parser.add_argument("--no-progress", action="store_true", help="Disable progression")
+# parser.add_argument("--json", action="store_true", help="")
+parser.add_argument("--print-all", action="store_true", help="Print not found")
+parser.add_argument(
+    "--print-error", action="store_true", help="Print error and timeout"
+)
+parser.add_argument(
+    "--used-account-testmode", action="store_true", help="Print error and timeout"
+)
+parser.add_argument(
+    "--status-code-testmode", action="store_true", help="Print error and timeout"
+)
+parser.add_argument("username", help="Target Username")
+parser.add_argument("--timeout", type=int, help="Modify request timeout")
+
+# parser.add_argument(
+#     "-s",
+#     "--singlesearch",
+#     nargs="*",
+#     help="\033[32m\033[1m\nSingle site search\033[0m",
+# )
+# parser.add_argument(
+#     "-f",
+#     "--fulllist",
+#     action="store_true",
+#     help="\033[32m\033[1m\nView full sites list on Project WMN | Find site name before doing a single search\033[0m\n\n",
+# )
+# parser.add_argument(
+#     "-c",
+#     "--countsites",
+#     action="store_true",
+#     help="\033[32m\033[1m\nNumber of sites currently supported on Project WhatsMyName\033[0m\n",
+# )
+
+args = parser.parse_args()
+
+account = args.username
+print_all_mode = args.print_all
+print_error_mode = args.print_error
+
+no_progress = not args.no_progress
+
+timeout_time = args.timeout
+if timeout_time == None:
+    timeout_time = 2
+
+used_account_test_mode = args.used_account_testmode
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
@@ -21,47 +65,88 @@ def requestsCheck(
     m_string,
     formatted_url,
     semaphore,
+    e_code,
+    m_code,
 ):
+    global found_counter
     global current_state
     global total_url
     global last_print
     try:
-        response = session.get(formatted_url, headers=headers, timeout=2)
-    except Exception:
+        response = session.get(formatted_url, headers=headers, timeout=timeout_time)
+    except Exception as e:
+        if print_error_mode:
+            if "timed out" or "timeout" in str(e):
+                print(Fore.YELLOW + f" ➤ {formatted_url}", Style.RESET_ALL)
+            else:
+                print(
+                    Back.RED + Fore.WHITE, f"{e} url={formatted_url}", Style.RESET_ALL
+                )
         semaphore.release()
         current_state += 1
         return
     else:
         status_code = response.status_code
         decoded_html = response.content.decode("utf-8", errors="ignore")
-        if status_code < 400:
+
+        if status_code == e_code:
             if e_string in decoded_html:
-                reply = f"Found: {formatted_url}"
+                reply = f" ➤ {formatted_url}"
                 found = True
                 if m_string in decoded_html:
+                    reply = f" ➤ {formatted_url}"
                     found = False
                 if found:
-                    print('\r' + ' ' * len(last_print), end='\r', flush=True)
+                    if no_progress:
+                        print("\r" + " " * len(last_print), end="\r", flush=True)
                     print(Fore.GREEN + reply + Style.RESET_ALL, end="\n")
-                    global found_counter
                     found_counter += 1
-    advance = f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%)"
-    last_print = advance
-    print(
-        advance,
-        end="\r",
-        flush=True,
-    )
+                elif print_all_mode:
+                    if no_progress:
+                        print("\r" + " " * len(last_print), end="\r", flush=True)
+                    print(Fore.RED + reply + Style.RESET_ALL, end="\n")
+
+        elif print_error_mode:
+            if status_code != m_code:
+                print(
+                    Fore.RED,
+                    " ➤",
+                    Style.RESET_ALL,
+                    formatted_url,
+                    ":",
+                    Back.RED + Fore.WHITE,
+                    status_code,
+                    Style.RESET_ALL,
+                    "e_code = ",
+                    Back.GREEN,
+                    e_code,
+                    Style.RESET_ALL,
+                )
+
+    if no_progress:
+        advance = f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%)"
+        last_print = advance
+        print(
+            advance,
+            end="\r",
+            flush=True,
+        )
     semaphore.release()
     current_state += 1
 
 
-
 def main(uri_checks):
+    global account
     for site in uri_checks:
         url = site.get("uri_check")
         e_string = site.get("e_string")
         m_string = site.get("m_string")
+        if used_account_test_mode:
+            account = site.get("known")
+            account = account[0]
+
+        e_code = site.get("e_code")
+        m_code = site.get("m_code")
 
         formatted_url = url.format(account=account)
 
@@ -73,6 +158,8 @@ def main(uri_checks):
                 m_string,
                 formatted_url,
                 semaphore,
+                e_code,
+                m_code,
             ),
         )
         threads.append(thread)
@@ -80,7 +167,7 @@ def main(uri_checks):
 
 
 # def global variable
-last_print = ''
+last_print = ""
 found_counter = 0
 current_state = 0
 
