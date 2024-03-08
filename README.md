@@ -2,6 +2,7 @@
 
 - [ ] function to update wmn-data.json
 - [ ] argparse
+- [ ] search by cat
 - [x] fix progress bug
 - [ ] make better error code (no lol)
 - [x] use also m_string to verify url
@@ -21,3 +22,7 @@ pip install -r requirements.txt
 ```shell
 python core.py john
 ```
+
+## Screenshot
+
+![screenshot](./assets/screenshot.png)

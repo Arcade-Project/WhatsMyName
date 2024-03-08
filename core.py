@@ -6,44 +6,53 @@ import threading
 from colorama import init, Back, Fore, Style
 
 parser = argparse.ArgumentParser(description="WhatsMyName for ARCADE-DB")
-# parser.add_argument('--output', '-o', action='store_true', help='Activer la sortie verbosité')
-parser.add_argument("--no-progress", action="store_true", help="Disable progression")
+# parser.add_argument('--output', '-o', action='store_true', help='')
 # parser.add_argument("--json", action="store_true", help="")
-parser.add_argument("--print-all", action="store_true", help="Print not found")
 parser.add_argument(
-    "--print-error", action="store_true", help="Print error and timeout"
+    "--no-progress", "-np", action="store_true", help="Disable progression"
 )
 parser.add_argument(
-    "--used-account-testmode", action="store_true", help="Print error and timeout"
+    "--print-all", "-a", action="store_true", help="Print also not found"
 )
 parser.add_argument(
-    "--status-code-testmode", action="store_true", help="Print error and timeout"
+    "--print-error", "-e", action="store_true", help="Print error, status_code and timeout"
 )
-parser.add_argument("username", help="Target Username")
-parser.add_argument("--timeout", type=int, help="Modify request timeout")
+parser.add_argument(
+    "--used-account-testmode", "-u", action="store_true", help="Use already logged-in accounts to check correct operation"
+)
+parser.add_argument(
+    "username", nargs="?", default="ArgUmEnt_nOt_spEcIfIEd", help="Target Username"
+)
+parser.add_argument("--timeout", "-t", type=int, help="Modify request timeout, default = 2")
 
 # parser.add_argument(
 #     "-s",
 #     "--singlesearch",
 #     nargs="*",
-#     help="\033[32m\033[1m\nSingle site search\033[0m",
+#     help="Single site search",
 # )
 # parser.add_argument(
 #     "-f",
 #     "--fulllist",
 #     action="store_true",
-#     help="\033[32m\033[1m\nView full sites list on Project WMN | Find site name before doing a single search\033[0m\n\n",
+#     help="View full sites list on Project WMN | Find site name before doing a single search",
 # )
 # parser.add_argument(
 #     "-c",
 #     "--countsites",
 #     action="store_true",
-#     help="\033[32m\033[1m\nNumber of sites currently supported on Project WhatsMyName\033[0m\n",
+#     help="Number of sites currently supported on Project WhatsMyName",
 # )
 
 args = parser.parse_args()
 
+used_account_test_mode = args.used_account_testmode
 account = args.username
+if account == "ArgUmEnt_nOt_spEcIfIEd":
+    if not used_account_test_mode:
+        parser.print_help()
+        exit()
+
 print_all_mode = args.print_all
 print_error_mode = args.print_error
 
@@ -53,7 +62,6 @@ timeout_time = args.timeout
 if timeout_time == None:
     timeout_time = 2
 
-used_account_test_mode = args.used_account_testmode
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
