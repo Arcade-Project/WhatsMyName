@@ -4,7 +4,7 @@
 - [ ] argparse
 - [ ] search by cat
 - [x] fix progress bug
-- [ ] make better error code (no lol)
+- [ ] make better error code
 - [x] use also m_string to verify url
 - [x] multiThreading with threading
 - [x] update function

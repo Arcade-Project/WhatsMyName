@@ -1,3 +1,4 @@
+import os
 import json
 import time
 import argparse
@@ -24,6 +25,7 @@ parser.add_argument(
     "username", nargs="?", default="ArgUmEnt_nOt_spEcIfIEd", help="Target Username"
 )
 parser.add_argument("--timeout", "-t", type=int, help="Modify request timeout, default = 2")
+parser.add_argument("--minimal", "-m", action="store_true", help="Minimal print")
 
 # parser.add_argument(
 #     "-s",
@@ -57,6 +59,11 @@ print_all_mode = args.print_all
 print_error_mode = args.print_error
 
 no_progress = not args.no_progress
+
+minimal_mode = args.minimal
+
+if minimal_mode:
+    no_progress = False
 
 timeout_time = args.timeout
 if timeout_time == None:
@@ -107,7 +114,10 @@ def requestsCheck(
                 if found:
                     if no_progress:
                         print("\r" + " " * len(last_print), end="\r", flush=True)
-                    print(Fore.GREEN + reply + Style.RESET_ALL, end="\n")
+                    if minimal_mode:
+                        print(formatted_url)
+                    else:
+                        print(Fore.GREEN + reply + Style.RESET_ALL, end="\n")
                     found_counter += 1
                 elif print_all_mode:
                     if no_progress:
@@ -182,7 +192,10 @@ current_state = 0
 threads = []
 semaphore = threading.Semaphore(30)
 
-with open("wmn-data.json") as f:
+current_directory = os.path.dirname(os.path.abspath(__file__))
+file_path = os.path.join(current_directory, "wmn-data.json")
+
+with open(file_path) as f:
     data = json.load(f)
 
 uri_checks = data.get("sites", [])
