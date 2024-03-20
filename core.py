@@ -216,13 +216,13 @@ for thread in threads:
 end_time = time.time()
 execution_time = end_time - start_time
 
-print(
+if not minimal_mode:
+    print(
     "",
     end="\r",
     flush=True,
-)
+    )
 
-if not minimal_mode:
     print(
         Back.BLACK
         + f"Progress: {current_state}/{total_url} ({(current_state/total_url)*100:.2f}%) {found_counter}/{total_url} found {execution_time:.2f}s"
