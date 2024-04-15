@@ -36,12 +36,8 @@ def requestsCheck(
     global last_print
     try:
         response = session.get(formatted_url, headers=headers, timeout=2)
-    except Exception as e:
-        if False:
-            if "timed out" or "timeout" in str(e):
-                print(f" ➤ {formatted_url}")
-            else:
-                print(f"{e} url={formatted_url}")
+    except Exception:
+        # print(f"{current_state},, update")
         semaphore.release()
         current_state += 1
         return
@@ -59,15 +55,8 @@ def requestsCheck(
                 else:
                     print(f"{current_state}, {formatted_url}, notfound")
 
-        elif False:
-            if status_code != m_code:
-                print(
-                    formatted_url,
-                    ":",
-                    status_code,
-                    "e_code = ",
-                    e_code,
-                )
+        # else:
+        # print(f"{current_state},, update")
 
     semaphore.release()
     current_state += 1
