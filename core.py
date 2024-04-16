@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import argparse
@@ -7,10 +8,13 @@ import threading
 from colorama import init
 
 parser = argparse.ArgumentParser(description="WhatsMyName for ARCADE-DB")
+parser.add_argument("username", help="Target Username")
+parser.add_argument(
+    "category", nargs="?", default="false", help="Filter searches by category"
+)
 parser.add_argument(
     "--print-all", "-a", action="store_true", help="Print also not found"
 )
-parser.add_argument("username", nargs="?", default="john", help="Target Username")
 
 args = parser.parse_args()
 
@@ -22,14 +26,7 @@ headers = {
 }
 
 
-def requestsCheck(
-    e_string,
-    m_string,
-    formatted_url,
-    semaphore,
-    e_code,
-    m_code,
-):
+def requestsCheck(e_string, m_string, formatted_url, semaphore, e_code, m_code, name):
     global found_counter
     global current_state
     global total_url
@@ -51,9 +48,9 @@ def requestsCheck(
                 if m_string in decoded_html:
                     found = False
                 if found:
-                    print(f"{current_state}, {formatted_url}, found")
+                    print(f"{current_state}, {name}, {formatted_url}, found")
                 else:
-                    print(f"{current_state}, {formatted_url}, notfound")
+                    print(f"{current_state}, {name}, {formatted_url}, notfound")
 
         # else:
         # print(f"{current_state},, update")
@@ -72,19 +69,14 @@ def main(uri_checks):
         e_code = site.get("e_code")
         m_code = site.get("m_code")
 
+        name = site.get("name")
+
         formatted_url = url.format(account=account)
 
         semaphore.acquire()
         thread = threading.Thread(
             target=requestsCheck,
-            args=(
-                e_string,
-                m_string,
-                formatted_url,
-                semaphore,
-                e_code,
-                m_code,
-            ),
+            args=(e_string, m_string, formatted_url, semaphore, e_code, m_code, name),
         )
         threads.append(thread)
         thread.start()
@@ -100,10 +92,17 @@ semaphore = threading.Semaphore(30)
 current_directory = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(current_directory, "wmn-data.json")
 
-with open(file_path) as f:
+with open(file_path, encoding="utf-8") as f:
     data = json.load(f)
 
 uri_checks = data.get("sites", [])
+if args.category != "false":
+    valid_categories = data.get("categories", [])
+    if args.category not in valid_categories:
+        print("ERROR, invalid category name")
+        sys.exit()
+    else:
+        uri_checks = [site for site in uri_checks if site.get("cat") == args.category]
 total_url = len(uri_checks)
 
 # start
