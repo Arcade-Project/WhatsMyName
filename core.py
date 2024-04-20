@@ -34,7 +34,7 @@ def requestsCheck(e_string, m_string, formatted_url, semaphore, e_code, m_code, 
     try:
         response = session.get(formatted_url, headers=headers, timeout=2)
     except Exception:
-        # print(f"{current_state},, update")
+        print(f"{current_state},,,update")
         semaphore.release()
         current_state += 1
         return
@@ -48,12 +48,12 @@ def requestsCheck(e_string, m_string, formatted_url, semaphore, e_code, m_code, 
                 if m_string in decoded_html:
                     found = False
                 if found:
-                    print(f"{current_state}, {name}, {formatted_url}, found")
+                    print(f"{current_state}, {name}, {formatted_url},found")
                 else:
-                    print(f"{current_state}, {name}, {formatted_url}, notfound")
+                    print(f"{current_state}, {name}, {formatted_url},notfound")
 
-        # else:
-        # print(f"{current_state},, update")
+        else:
+            print(f"{current_state},,,update")
 
     semaphore.release()
     current_state += 1
