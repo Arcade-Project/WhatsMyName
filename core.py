@@ -7,6 +7,8 @@ import requests
 import threading
 from colorama import init
 
+import csv
+
 parser = argparse.ArgumentParser(description="WhatsMyName for ARCADE-DB")
 parser.add_argument("username", help="Target Username")
 parser.add_argument(
@@ -34,7 +36,9 @@ def requestsCheck(e_string, m_string, formatted_url, semaphore, e_code, m_code, 
     try:
         response = session.get(formatted_url, headers=headers, timeout=2)
     except Exception:
-        print(f"{current_state},,,update")
+        # print(f"{current_state},update")
+        output = [current_state, "update"]
+        writer.writerow(output)
         semaphore.release()
         current_state += 1
         return
@@ -48,13 +52,17 @@ def requestsCheck(e_string, m_string, formatted_url, semaphore, e_code, m_code, 
                 if m_string in decoded_html:
                     found = False
                 if found:
-                    print(f"{current_state}, {name}, {formatted_url},found")
+                    # print(f'{current_state},found, "{name}", "{formatted_url}"')
+                    output = [current_state, "found", name, formatted_url]
+                    writer.writerow(output)
                 else:
-                    print(f"{current_state}, {name}, {formatted_url},notfound")
-
+                    # print(f'{current_state},notfound, "{name}", "{formatted_url}"')
+                    output = [current_state, "notfound", name, formatted_url]
+                    writer.writerow(output)
         else:
-            print(f"{current_state},,,update")
-
+            # print(f"{current_state},update")
+            output = [current_state, "update"]
+            writer.writerow(output)
     semaphore.release()
     current_state += 1
 
@@ -110,6 +118,8 @@ start_time = time.time()
 
 # colorama init
 init()
+
+writer = csv.writer(sys.stdout)
 
 if __name__ == "__main__":
     print(f"{total_url},WMN")
