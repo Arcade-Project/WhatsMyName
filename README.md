@@ -1,15 +1,12 @@
 ## WMN ARC DB
 
+- [ ] number of thread arguments
 - [ ] function to update wmn-data.json
-- [ ] argparse
-- [ ] search by cat
-- [x] fix progress bug
-- [ ] make better error code
+- [x] argparse
+- [x] search by cat
 - [x] use also m_string to verify url
-- [x] multiThreading with threading
-- [x] update function
-- [x] opti threading
-- [x] opti requests
+- [x] multiThreading
+- [x] requests session
 
 ## Installation
 
@@ -20,9 +17,5 @@ pip install -r requirements.txt
 ## Usage
 
 ```shell
-python core.py john
+python main.py john
 ```
-
-## Screenshot
-
-![screenshot](./assets/screenshot.png)
