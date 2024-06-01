@@ -1,5 +1,6 @@
 ## WMN ARC DB
 
+- [ ] solve the problem of false current_state and percentage
 - [ ] number of thread arguments
 - [ ] function to update wmn-data.json
 - [x] argparse

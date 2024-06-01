@@ -1,26 +1,22 @@
 from colorama import Fore, Style
-
-from . import globals
-from .helper import update_current_state
+from wmn import globals
 
 
 def requests_check(e_string, m_string, formatted_url, e_code, m_code, name, session):
+
     try:
         response = session.get(
             formatted_url, headers=globals.headers, timeout=globals.timeout
         )
     except Exception as e:
         if globals.print_error_mode:
-            print(
-                globals.current_state,
+            return (
                 Fore.RED,
-                "🐛",
                 "error",
                 formatted_url,
-                e,
+                str(e),
                 Style.RESET_ALL,
             )
-        update_current_state()
         return
     else:
         status_code = response.status_code
@@ -28,35 +24,41 @@ def requests_check(e_string, m_string, formatted_url, e_code, m_code, name, sess
 
         if status_code == e_code:
             if e_string in decoded_html:
-                print(
-                    globals.current_state,
-                    Fore.GREEN,
-                    "found",
+                return (Fore.GREEN, "found", Style.RESET_ALL, name, formatted_url)
+            elif globals.print_all_mode:
+                return (
+                    Fore.YELLOW,
+                    "false positive",
                     Style.RESET_ALL,
                     name,
                     formatted_url,
                 )
-            elif globals.print_all_mode:
-                print(
-                    globals.current_state,
-                    Fore.YELLOW,
-                    "false positive",
-                    Style.RESET_ALL,
-                    formatted_url,
-                )
-        elif globals.print_all_mode:
+        elif globals.print_all_mode or globals.print_error_mode:
             if status_code == m_code:
                 if m_string in decoded_html:
-                    print(
-                        globals.current_state,
+                    if globals.print_all_mode:
+                        return (
+                            Fore.RED,
+                            "not found",
+                            Style.RESET_ALL,
+                            name,
+                            formatted_url,
+                        )
+                else:
+                    if globals.print_error_mode:
+                        return (
+                            Fore.RED,
+                            "error no match for e_string and m_string",
+                            formatted_url,
+                            Style.RESET_ALL,
+                        )
+            else:
+                if globals.print_error_mode:
+                    return (
                         Fore.RED,
-                        "not found",
-                        Style.RESET_ALL,
-                        name,
+                        "error no matching status code",
                         formatted_url,
+                        Style.RESET_ALL,
                     )
-                """
-                There is no 'else' here because I don't think the information is useful.
-                If the 'else' were executed, it would be because the JSON contains an incorrect value.
-                """
-    update_current_state()
+        else:
+            return

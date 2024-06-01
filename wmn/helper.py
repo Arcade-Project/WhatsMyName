@@ -1,12 +1,12 @@
-from . import globals
-
-
-def set_total_url(arg):
-    globals.total_url = arg
+from wmn import globals
 
 
 def update_current_state():
     globals.current_state = globals.current_state + 1
+
+
+def set_total_url(arg):
+    globals.total_url = arg
 
 
 def set_timeout(arg):

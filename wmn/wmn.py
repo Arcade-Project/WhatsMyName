@@ -5,9 +5,9 @@ import argparse
 import requests
 from colorama import init, Fore, Style
 
-from .list_categories import print_categories
-from .concurrent_uri_checks import exec_concurrent_uri_checks
-from .helper import (
+from wmn import (
+    print_categories,
+    exec_concurrent_uri_checks,
     set_total_url,
     set_timeout,
     enable_print_all_mode,
@@ -64,8 +64,17 @@ if args.timeout:
 
 
 def main():
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_directory, "wmn-data.json")
+
+    # colorama init
+    init()
+
+    current_directory = os.path.abspath(os.path.dirname(__file__))
+    parent_directory = os.path.dirname(current_directory)
+    file_path = os.path.join(parent_directory, "data", "wmn-data.json")
+
+    if not os.path.exists(file_path):
+        print(Fore.RED, "error wmn-data.json not found", Style.RESET_ALL)
+        exit()
 
     with open(file_path, encoding="utf-8") as f:
         data = json.load(f)
@@ -85,9 +94,6 @@ def main():
                 site for site in uri_checks if site.get("cat") == args.category
             ]
     set_total_url(len(uri_checks))
-
-    # colorama init
-    init()
 
     with requests.Session() as session:
         exec_concurrent_uri_checks(uri_checks, username, session)
