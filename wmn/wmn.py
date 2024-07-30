@@ -10,32 +10,31 @@ from wmn import (
     exec_concurrent_uri_checks,
     set_total_url,
     set_timeout,
+    set_max_concurrent_threads,
     enable_print_all_mode,
     enable_print_error_mode,
 )
+from .print_info import print_info
+from .update import check_and_update_file
 
-preliminary_parser = argparse.ArgumentParser(
-    description="WhatsMyName by ARCADE-DB", add_help=False
-)
-preliminary_parser.add_argument(
-    "--listcat", "-lc", action="store_true", help="List all available categories"
-)
-preliminary_args, remaining_args = preliminary_parser.parse_known_args()
-
-if preliminary_args.listcat:
-    # If --listcat is present, print the categories and exit
-    print_categories()
-    exit()
-
+# colorama init
+init()
 
 parser = argparse.ArgumentParser(description="WhatsMyName by ARCADE-DB")
-parser.add_argument("username", help="Target Username")
+parser.add_argument("username", nargs="?", help="Target Username")
 parser.add_argument(
     "category", nargs="?", default="false", help="Filter searches by category"
 )
 parser.add_argument(
     "--timeout", "-t", type=int, help="Modify request timeout, default = 2"
 )
+parser.add_argument(
+    "--threads", "-th", type=int, help="Modify max concurrent threads, default = 60"
+)
+parser.add_argument(
+    "--listcat", "-lc", action="store_true", help="List all available categories"
+)
+parser.add_argument("--update", "-u", action="store_true", help="Update wmn-data.json")
 parser.add_argument(
     "--print-all",
     "-a",
@@ -53,6 +52,10 @@ args = parser.parse_args()
 
 username = args.username
 
+if args.update:
+    check_and_update_file()
+    exit()
+
 if args.print_all:
     enable_print_all_mode()
 
@@ -62,11 +65,18 @@ if args.print_error:
 if args.timeout:
     set_timeout(args.timeout)
 
+if args.threads:
+    set_max_concurrent_threads(args.threads)
+
+# Print information
+print_info()
+
+if args.listcat:
+    print_categories()
+    exit()
+
 
 def main():
-
-    # colorama init
-    init()
 
     current_directory = os.path.abspath(os.path.dirname(__file__))
     parent_directory = os.path.dirname(current_directory)

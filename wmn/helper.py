@@ -13,7 +13,8 @@ def set_timeout(arg):
     globals.timeout = arg
 
 
-# ARGS
+def set_max_concurrent_threads(arg):
+    globals.max_concurrent_threads = arg
 
 
 def enable_print_all_mode():

@@ -29,7 +29,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
     from wmn import requests_check, update_current_state
 
     # Use ThreadPoolExecutor for concurrent execution
-    with ThreadPoolExecutor(max_workers=60) as executor:
+    with ThreadPoolExecutor(max_workers=globals.max_concurrent_threads) as executor:
         futures = []
         for site in uri_checks:
             url = site.get("uri_check")

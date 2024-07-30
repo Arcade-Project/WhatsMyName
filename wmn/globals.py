@@ -1,6 +1,7 @@
 total_url = 0
 current_state = 0
 timeout = 2  # in second
+max_concurrent_threads = 60
 
 print_all_mode = False
 print_error_mode = False
