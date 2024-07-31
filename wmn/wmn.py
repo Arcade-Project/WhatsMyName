@@ -8,15 +8,18 @@ from colorama import init, Fore, Style
 from wmn import (
     print_categories,
     exec_concurrent_uri_checks,
-    set_total_url,
-    set_timeout,
-    set_max_concurrent_threads,
-    enable_print_not_founds,
-    enable_print_false_positives,
-    enable_print_error,
     check_and_update_file,
     print_header_and_informations,
     print_header,
+    set_total_url,
+    set_timeout,
+    set_max_concurrent_threads,
+    set_username,
+    enable_print_not_founds,
+    enable_print_false_positives,
+    enable_print_error,
+    enable_export_csv,
+    enable_export_json,
 )
 
 # colorama init
@@ -54,10 +57,24 @@ parser.add_argument(
     action="store_true",
     help="Print error, status code, and timeout",
 )
+parser.add_argument(
+    "--export-csv", "-csv", action="store_true", help="Export search in csv"
+)
+parser.add_argument(
+    "--export-json", "-json", action="store_true", help="Export search in json"
+)
 
 args = parser.parse_args()
 
 username = args.username
+
+if args.export_csv:
+    set_username(username)
+    enable_export_csv()
+
+if args.export_json:
+    set_username(username)
+    enable_export_json()
 
 if args.update:
     check_and_update_file()

@@ -19,7 +19,7 @@ WhatsMyName/
     ├── globals.py
     ├── helper.py
     ├── list_categories.py
-    ├── print_info.py
+    ├── print_infos.py
     ├── requests_check.py
     ├── update.py
     └── wmn.py
@@ -31,9 +31,10 @@ WhatsMyName/
 ## TODO
 
 - [ ] stdout csv
-- [ ] data export to json and csv
 - [ ] tor & proxy support
 - [ ] profile extraction from found profiles
+- [ ] organize export with categories
+- [x] data export to json and csv
 - [x] change print_all to print_not_founds and print_false_positives
 - [x] solve the problem of false current_state and percentage
 - [x] number of threads argument
@@ -60,7 +61,7 @@ python main.py john
 > python main.py -h
 usage: main.py [-h] [--timeout TIMEOUT] [--threads THREADS] [--list-cat]
                [--update] [--print-not-founds] [--print-false-positives]
-               [--print-error]
+               [--print-error] [--export-csv] [--export-json]
                [username] [category]
 
 WhatsMyName by ARCADE-DB
@@ -82,4 +83,6 @@ options:
   --print-false-positives, -fp
                         Print false positives
   --print-error, -e     Print error, status code, and timeout
+  --export-csv, -csv    Export search in csv
+  --export-json, -json  Export search in json
 ```

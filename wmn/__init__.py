@@ -8,8 +8,11 @@ from .helper import (
     set_total_url,
     set_timeout,
     set_max_concurrent_threads,
+    set_username,
     enable_print_false_positives,
     enable_print_not_founds,
     enable_print_error,
+    enable_export_csv,
+    enable_export_json,
     update_current_state,
 )
