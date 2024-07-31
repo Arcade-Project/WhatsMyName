@@ -11,11 +11,13 @@ from wmn import (
     set_total_url,
     set_timeout,
     set_max_concurrent_threads,
-    enable_print_all_mode,
-    enable_print_error_mode,
+    enable_print_not_founds,
+    enable_print_false_positives,
+    enable_print_error,
+    check_and_update_file,
+    print_header_and_informations,
+    print_header,
 )
-from .print_info import print_info
-from .update import check_and_update_file
 
 # colorama init
 init()
@@ -32,14 +34,19 @@ parser.add_argument(
     "--threads", "-th", type=int, help="Modify max concurrent threads, default = 60"
 )
 parser.add_argument(
-    "--listcat", "-lc", action="store_true", help="List all available categories"
-)
-parser.add_argument("--update", "-u", action="store_true", help="Update wmn-data.json")
-parser.add_argument(
-    "--print-all",
-    "-a",
+    "--list-cat",
+    "-lc",
     action="store_true",
-    help="Print also not found and false positives",
+    help="List all available categories and exit",
+)
+parser.add_argument(
+    "--update", "-u", action="store_true", help="Update wmn-data.json and exit"
+)
+parser.add_argument(
+    "--print-not-founds", "-n", action="store_true", help="Print not founds"
+)
+parser.add_argument(
+    "--print-false-positives", "-fp", action="store_true", help="Print false positives"
 )
 parser.add_argument(
     "--print-error",
@@ -56,11 +63,14 @@ if args.update:
     check_and_update_file()
     exit()
 
-if args.print_all:
-    enable_print_all_mode()
+if args.print_not_founds:
+    enable_print_not_founds()
+
+if args.print_false_positives:
+    enable_print_false_positives()
 
 if args.print_error:
-    enable_print_error_mode()
+    enable_print_error()
 
 if args.timeout:
     set_timeout(args.timeout)
@@ -68,10 +78,8 @@ if args.timeout:
 if args.threads:
     set_max_concurrent_threads(args.threads)
 
-# Print information
-print_info()
-
-if args.listcat:
+if args.list_cat:
+    print_header()
     print_categories()
     exit()
 
@@ -104,6 +112,8 @@ def main():
                 site for site in uri_checks if site.get("cat") == args.category
             ]
     set_total_url(len(uri_checks))
+
+    print_header_and_informations()
 
     with requests.Session() as session:
         exec_concurrent_uri_checks(uri_checks, username, session)

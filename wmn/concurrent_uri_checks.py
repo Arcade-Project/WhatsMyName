@@ -21,7 +21,9 @@ def progress_bar():
 
 def _print(*args):
     erase_last_line()
-    print(globals.current_state, *args)
+    current_state_str = str(globals.current_state)
+    current_state_str = current_state_str.rjust(3)
+    print(current_state_str, *args)
     progress_bar()
 
 

@@ -17,9 +17,13 @@ def set_max_concurrent_threads(arg):
     globals.max_concurrent_threads = arg
 
 
-def enable_print_all_mode():
-    globals.print_all_mode = True
+def enable_print_false_positives():
+    globals.print_false_positives = True
 
 
-def enable_print_error_mode():
-    globals.print_error_mode = True
+def enable_print_not_founds():
+    globals.print_not_founds = True
+
+
+def enable_print_error():
+    globals.print_error = True
