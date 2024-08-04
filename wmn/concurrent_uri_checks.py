@@ -45,6 +45,9 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
 
             name = site.get("name")
 
+            cat = site.get("cat")
+            # know = site.get("know")
+
             formatted_url = url.format(account=username)
 
             # Submit the requests_check function to the executor
@@ -57,6 +60,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
                     e_code,
                     m_code,
                     name,
+                    cat,
                     session,
                 )
             )
@@ -67,6 +71,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
                 for arg in future.result():
                     output += arg.strip() + " "
                 _print(output)
+        print(globals.found_counter, "accounts found")
         if globals.export_csv or globals.export_json:
             now = datetime.now()
             timestamp = now.strftime("%H-%M-%S")

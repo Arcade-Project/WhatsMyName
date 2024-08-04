@@ -11,8 +11,11 @@ from .helper import (
     set_username,
     enable_print_false_positives,
     enable_print_not_founds,
-    enable_print_error,
+    enable_print_errors,
     enable_export_csv,
     enable_export_json,
+    enable_self_check,
     update_current_state,
+    update_found_counter,
+    update_errors_counter,
 )
