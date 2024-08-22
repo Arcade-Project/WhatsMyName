@@ -10,15 +10,12 @@ def self_check_requests(
             formatted_url, headers=globals.headers, timeout=globals.timeout
         )
     except Exception as e:
-        if globals.print_errors or globals.export_json:
-            if globals.export_csv or globals.export_json:
-                globals.csv_list.append(f'error, "{formatted_url}", "{str(e)}"')
-            return (
-                "error",
-                formatted_url,
-                str(e),
-            )
-        return
+        globals.requests_errors_list.append([name, formatted_url, str(e)])
+        return (
+            "error",
+            formatted_url,
+            str(e),
+        )
     else:
         received_status_code = response.status_code
         decoded_html = response.content.decode("utf-8", errors="ignore")
@@ -29,7 +26,10 @@ def self_check_requests(
             "m_string": False,
         }
 
-        # if status_code == "443":
+        if received_status_code == "443":
+            globals.status_code_errors_list.append(
+                [name, formatted_url, received_status_code]
+            )
         if e_code == received_status_code:
             results["e_code"] = True
 

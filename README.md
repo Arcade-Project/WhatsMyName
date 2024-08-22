@@ -30,20 +30,8 @@ WhatsMyName/
 
 ## TODO
 
-- [ ] stdout csv
-- [ ] tor & proxy support
-- [ ] profile extraction from found profiles
-- [ ] organize export with categories
-- [x] data export to json and csv
-- [x] change print_all to print_not_founds and print_false_positives
-- [x] solve the problem of false current_state and percentage
-- [x] number of threads argument
-- [x] Compare GITHUB API SHA key with local file version
-- [x] argparse
-- [x] search by cat
-- [x] use also m_string to verify url
-- [x] multiThreading
-- [x] requests session
+move :
+[TODO.md](/TODO.md)
 
 ## Installation
 

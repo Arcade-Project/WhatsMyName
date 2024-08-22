@@ -1208,6 +1208,16 @@
         "cat" : "gaming"
        },
        {
+        "name" : "character.ai",
+        "uri_check" : "https://character.ai/profile/{account}",
+        "e_code" : 200,
+        "e_string" : "\"page\":\"/profile/[username]\"",
+        "m_code" : 500,
+        "m_string" : "\"page\":\"/_error\"",
+        "known" : ["landon", "greg"],
+        "cat" : "tech"
+       },
+       {
         "name" : "Dailymotion",
         "uri_check" : "https://www.dailymotion.com/{account}",
         "e_code" : 200,
@@ -2167,8 +2177,8 @@
        },
        {
         "name" : "Gravatar",
-        "uri_check" : "http://en.gravatar.com/{account}.json",
-        "uri_pretty" : "http://en.gravatar.com/{account}",
+        "uri_check" : "https://en.gravatar.com/{account}.json",
+        "uri_pretty" : "https://en.gravatar.com/{account}",
         "e_code" : 200,
         "e_string" : "entry",
         "m_string" : "User not found",
@@ -2516,8 +2526,8 @@
         "name" : "HudsonRock",
         "uri_check" : "https://cavalier.hudsonrock.com/api/json/v2/osint-tools/search-by-username?username={account}",
         "e_code" : 200,
-        "e_string" : "total_corporate_services",
-        "m_string" : "No results",
+        "e_string" : "This username is associated with a computer that was infected by an info-stealer",
+        "m_string" : "This username is not associated with a computer infected by an info-stealer",
         "m_code" : 200,
         "known" : ["testadmin", "testadmin1"],
         "cat" : "tech"
@@ -2946,6 +2956,16 @@
         "m_code" : 404,
         "known" : ["test", "janek"],
         "cat" : "images"
+       },
+       {
+        "name" : "Letterboxd",
+        "uri_check" : "https://letterboxd.com/{account}/",
+        "e_code" : 200,
+        "e_string" : "’s profile on Letterboxd",
+        "m_string" : "Sorry, we can’t find the page you’ve requested.",
+        "m_code" : 404,
+        "known" : ["serdaraltin", "choi"],
+        "cat" : "social"
        },
        {
         "name" : "LibraryThing",

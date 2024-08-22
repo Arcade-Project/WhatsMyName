@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from wmn import globals
 
 
@@ -47,6 +48,19 @@ def exec_concurrent_self_check(uri_checks, session, report_type):
                 print(output)
         print(globals.found_counter, "accounts found")
         print("erros counter :", globals.errors_counter)
+
+        now = datetime.now()
+        timestamp = now.strftime("%H-%M-%S")
+        file_name = f"self_check_{timestamp}.md"
+
+        names = [item[0] for item in globals.errors_list]
+        unique_names = [name for name in names if names.count(name) == 1]
+
+        def unique_names_errors_md(report_list):
+            if report_list in unique_names:
+                return "- [ ] Only one of the two names in known has received a reply\n"
+            return ""
+
         if report_type == "detailed":
             report_md = ""
             i = 0
@@ -75,15 +89,33 @@ def exec_concurrent_self_check(uri_checks, session, report_type):
 ### Errors detected
 
 {errors_messages(report_list[2]["e_code"], report_list[2]["e_string"], report_list[2]["m_code"], report_list[2]["m_string"])}
+{unique_names_errors_md(report_list[0])}
+---
+
+"""
+                )
+            for report_status_code in globals.status_code_errors_list:
+                i = i + 1
+                report_md = (
+                    report_md
+                    + f"""
+## {i}. Name : **{report_status_code[0]}**
+
+- **Formatted URL :** [{report_status_code[1]}]({report_status_code[1]})
+
+### Results
+
+- **exception :** `{report_status_code[2]}`
 
 ---
+
 """
                 )
 
-            with open("self_check.md", "w") as file:
+            with open(file_name, "w") as file:
                 file.write(report_md)
         elif report_type == "summary":
-            with open("self_check.md", "w") as file:
+            with open(file_name, "w") as file:
                 for line in globals.errors_list:
                     file.write(str(line) + "\n")
 

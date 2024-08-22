@@ -20,5 +20,7 @@ headers = {
 # Contrib tools
 errors_counter = 0
 errors_list = []
+status_code_errors_list = []
+requests_errors_list = []
 self_check = False
 summary_report = False
