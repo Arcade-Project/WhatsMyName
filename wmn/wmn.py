@@ -74,7 +74,15 @@ parser.add_argument(
     choices=["summary", "detailed"],
     help="Generate an error report: summary or detailed",
 )
-parser.add_argument("--export", "-E", type=str, help="Export search in csv or json")
+# parser.add_argument("--export", "-E", type=str, help="Export search in csv or json")
+
+parser.add_argument(
+    "--export",
+    "-E",
+    type=str,
+    choices=["json", "csv", "both"],
+    help="Export search in csv, json, or both",
+)
 # parser.add_argument(
 #     "--no-color", action="store_true", help="Don't color terminal output"
 # )
@@ -87,10 +95,21 @@ args = parser.parse_args()
 username = args.username
 
 if args.export:
-    set_username(username)
+    if username:
+        set_username(username)
+    else:
+        print(
+            Fore.RED,
+            "error, username not defined",
+            Style.RESET_ALL,
+        )
+        exit()
     if args.export == "csv":
         enable_export_csv()
     elif args.export == "json":
+        enable_export_json()
+    elif args.export == "both":
+        enable_export_csv()
         enable_export_json()
     else:
         print(
@@ -128,6 +147,14 @@ if args.self_check:
 if args.list_cat:
     print_header()
     print_categories()
+    exit()
+
+if not username:
+    print(
+        Fore.RED,
+        "error, username not defined",
+        Style.RESET_ALL,
+    )
     exit()
 
 

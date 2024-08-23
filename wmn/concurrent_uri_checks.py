@@ -80,7 +80,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
                 with open(file_name, "w") as file:
                     for line in globals.csv_list:
                         file.write(line + "\n")
-            elif globals.export_json:
+            if globals.export_json:
                 json_output = {
                     "found": {},
                     "not found": {},
