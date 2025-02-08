@@ -21,7 +21,7 @@ def progress_bar():
     print(f"Progress: {globals.current_state}/{globals.total_url} ({percent:.2f}%)")
 
 
-def _print(*args):
+def print_and_update_progress(*args):
     erase_last_line()
     current_state_str = str(globals.current_state)
     current_state_str = current_state_str.rjust(3)
@@ -70,7 +70,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
             if future.result():
                 for arg in future.result():
                     output += arg.strip() + " "
-                _print(output)
+                print_and_update_progress(output)
         print(globals.found_counter, "accounts found")
         if globals.export_csv or globals.export_json:
             now = datetime.now()
