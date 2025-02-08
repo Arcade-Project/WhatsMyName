@@ -30,20 +30,8 @@ WhatsMyName/
 
 ## TODO
 
-- [ ] stdout csv
-- [ ] tor & proxy support
-- [ ] profile extraction from found profiles
-- [ ] organize export with categories
-- [x] data export to json and csv
-- [x] change print_all to print_not_founds and print_false_positives
-- [x] solve the problem of false current_state and percentage
-- [x] number of threads argument
-- [x] Compare GITHUB API SHA key with local file version
-- [x] argparse
-- [x] search by cat
-- [x] use also m_string to verify url
-- [x] multiThreading
-- [x] requests session
+move :
+[TODO.md](/TODO.md)
 
 ## Installation
 
@@ -59,30 +47,33 @@ python main.py john
 
 ```bash
 > python main.py -h
-usage: main.py [-h] [--timeout TIMEOUT] [--threads THREADS] [--list-cat]
-               [--update] [--print-not-founds] [--print-false-positives]
-               [--print-error] [--export-csv] [--export-json]
-               [username] [category]
+usage: main.py [-h] [--categories CATEGORIES] [--timeout TIMEOUT] [--threads THREADS]
+               [--list-cat] [--update] [--print-not-founds] [--print-false-positives]
+               [--print-errors] [--self-check {summary,detailed}] [--export {json,csv,both}]
+               [username]
 
 WhatsMyName by ARCADE-DB
 
 positional arguments:
   username              Target Username
-  category              Filter searches by category
 
 options:
   -h, --help            show this help message and exit
+  --categories CATEGORIES, -cat CATEGORIES
+                        Filter searches by category
   --timeout TIMEOUT, -t TIMEOUT
-                        Modify request timeout, default = 2
+                        Modify time to wait for response to requests, default = 30
   --threads THREADS, -th THREADS
-                        Modify max concurrent threads, default = 60
+                        Modify max concurrent threads, default = 100
   --list-cat, -lc       List all available categories and exit
   --update, -u          Update wmn-data.json and exit
   --print-not-founds, -n
-                        Print not founds
+                        Print sites where the username was not found
   --print-false-positives, -fp
                         Print false positives
-  --print-error, -e     Print error, status code, and timeout
-  --export-csv, -csv    Export search in csv
-  --export-json, -json  Export search in json
+  --print-errors, -e    Print errors messages: connection, status code, and timeout
+  --self-check {summary,detailed}
+                        Generate an error report: summary or detailed
+  --export {json,csv,both}, -E {json,csv,both}
+                        Export search in csv, json, or both
 ```

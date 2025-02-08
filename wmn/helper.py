@@ -5,6 +5,14 @@ def update_current_state():
     globals.current_state = globals.current_state + 1
 
 
+def update_found_counter():
+    globals.found_counter = globals.found_counter + 1
+
+
+def update_errors_counter():
+    globals.errors_counter = globals.errors_counter + 1
+
+
 def set_total_url(arg):
     globals.total_url = arg
 
@@ -29,8 +37,8 @@ def enable_print_not_founds():
     globals.print_not_founds = True
 
 
-def enable_print_error():
-    globals.print_error = True
+def enable_print_errors():
+    globals.print_errors = True
 
 
 def enable_export_csv():
@@ -39,3 +47,7 @@ def enable_export_csv():
 
 def enable_export_json():
     globals.export_json = True
+
+
+def enable_self_check():
+    globals.self_check = True

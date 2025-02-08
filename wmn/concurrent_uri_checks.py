@@ -21,7 +21,7 @@ def progress_bar():
     print(f"Progress: {globals.current_state}/{globals.total_url} ({percent:.2f}%)")
 
 
-def _print(*args):
+def print_and_update_progress(*args):
     erase_last_line()
     current_state_str = str(globals.current_state)
     current_state_str = current_state_str.rjust(3)
@@ -45,6 +45,9 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
 
             name = site.get("name")
 
+            cat = site.get("cat")
+            # know = site.get("know")
+
             formatted_url = url.format(account=username)
 
             # Submit the requests_check function to the executor
@@ -57,6 +60,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
                     e_code,
                     m_code,
                     name,
+                    cat,
                     session,
                 )
             )
@@ -66,7 +70,8 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
             if future.result():
                 for arg in future.result():
                     output += arg.strip() + " "
-                _print(output)
+                print_and_update_progress(output)
+        print(globals.found_counter, "accounts found")
         if globals.export_csv or globals.export_json:
             now = datetime.now()
             timestamp = now.strftime("%H-%M-%S")
@@ -75,7 +80,7 @@ def exec_concurrent_uri_checks(uri_checks, username, session):
                 with open(file_name, "w") as file:
                     for line in globals.csv_list:
                         file.write(line + "\n")
-            elif globals.export_json:
+            if globals.export_json:
                 json_output = {
                     "found": {},
                     "not found": {},

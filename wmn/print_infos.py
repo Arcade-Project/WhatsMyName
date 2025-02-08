@@ -27,7 +27,7 @@ timeout               : {globals.timeout}
 -----------------------------
 print not founds      : {globals.print_not_founds}
 print false positives : {globals.print_false_positives}
-print error           : {globals.print_error}
+print errors          : {globals.print_errors}
 =============================
 """
 
