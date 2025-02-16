@@ -51,3 +51,7 @@ def enable_export_json():
 
 def enable_self_check():
     globals.self_check = True
+
+
+def enable_retesting_errors():
+    globals.retesting_errors = True

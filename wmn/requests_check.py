@@ -3,7 +3,7 @@ from colorama import Fore, Style
 
 
 def requests_check(
-    e_string, m_string, formatted_url, e_code, m_code, name, cat, session
+    e_string, m_string, formatted_url, e_code, m_code, name, session
 ):
     from wmn import update_found_counter
 
@@ -13,8 +13,16 @@ def requests_check(
         )
     except Exception as e:
 
-        if globals.export_csv or globals.export_json:
-            globals.csv_list.append(f'error, "{formatted_url}", "{str(e)}"')
+        if globals.retesting_errors:
+            globals.requests_errors_list.append(
+                [formatted_url, str(e).replace(",", ";")])
+
+        if (
+            globals.export_csv or
+            globals.export_json
+        ):
+            globals.csv_list.append(f'error, "{formatted_url}", "{
+                                    str(e).replace(",", ";")}"')
         if globals.print_errors:
             return (
                 Fore.RED,
@@ -32,7 +40,7 @@ def requests_check(
         if (
             e_code == received_status_code
             and e_string in decoded_html
-            and not m_string in decoded_html
+            and m_string not in decoded_html
         ):
 
             if globals.export_csv or globals.export_json:
@@ -43,11 +51,20 @@ def requests_check(
         elif globals.print_not_founds:
             if m_code == received_status_code and m_string in decoded_html:
                 if globals.export_csv or globals.export_json:
-                    globals.csv_list.append(f'not found, "{name}", "{formatted_url}"')
+                    globals.csv_list.append(
+                        f'not found, "{name}", "{formatted_url}"')
                 return (
                     Fore.RED,
                     "not found",
                     Style.RESET_ALL,
                     name,
                     formatted_url,
+                )
+            else:
+                return (
+                    Fore.RED,
+                    "error",
+                    formatted_url,
+                    "wrong definition in wmn-data.json",
+                    Style.RESET_ALL,
                 )

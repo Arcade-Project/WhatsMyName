@@ -1,6 +1,5 @@
 from colorama import Fore, Style
-from .update import check_version_status
-from wmn import globals
+from wmn import globals, check_version_status
 
 
 def colorize_status_color():
@@ -13,7 +12,8 @@ def colorize_status_color():
 
 header = f"""\
 =============================
-{Fore.YELLOW}WhatsMyName {Style.RESET_ALL}by {Fore.MAGENTA}ARCADE DB {Style.RESET_ALL}
+{Fore.YELLOW}WhatsMyName \
+{Style.RESET_ALL}by {Fore.MAGENTA}ARCADE DB {Style.RESET_ALL}
 wmn-data.json {Fore.RED}is{Style.RESET_ALL} {colorize_status_color()}
 """
 
@@ -28,6 +28,7 @@ timeout               : {globals.timeout}
 print not founds      : {globals.print_not_founds}
 print false positives : {globals.print_false_positives}
 print errors          : {globals.print_errors}
+retesting errors      : {globals.retesting_errors}
 =============================
 """
 

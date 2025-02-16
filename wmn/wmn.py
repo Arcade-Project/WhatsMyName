@@ -7,6 +7,7 @@ from colorama import init, Fore, Style
 
 from wmn import (
     print_categories,
+    search_by_site,
     exec_concurrent_uri_checks,
     check_and_update_file,
     print_header_and_informations,
@@ -18,6 +19,7 @@ from wmn import (
     enable_print_not_founds,
     enable_print_false_positives,
     enable_print_errors,
+    enable_retesting_errors,
     enable_export_csv,
     enable_export_json,
     enable_self_check,
@@ -69,13 +71,13 @@ parser.add_argument(
     action="store_true",
     help="Print errors messages: connection, status code, and timeout",
 )
+parser.add_argument("--retesting-errors", "-re",
+                    action="store_true", help="Retesting errors")
 parser.add_argument(
     "--self-check",
     choices=["summary", "detailed"],
     help="Generate an error report: summary or detailed",
 )
-# parser.add_argument("--export", "-E", type=str, help="Export search in csv or json")
-
 parser.add_argument(
     "--export",
     "-E",
@@ -87,7 +89,8 @@ parser.add_argument(
 #     "--no-color", action="store_true", help="Don't color terminal output"
 # )
 # parser.add_argument("--no-progressbar", action="store_true", help="Hide progressbar")
-# parser.add_argument("--site", "-s", type=str, help="Search only on specified sites")
+parser.add_argument("--search_by_site", "-s", action="store_true",
+                    help="Search only on specified sites")
 
 
 args = parser.parse_args()
@@ -132,6 +135,9 @@ if args.print_false_positives:
 if args.print_errors:
     enable_print_errors()
 
+if args.retesting_errors:
+    enable_retesting_errors()
+
 if args.timeout:
     set_timeout(args.timeout)
 
@@ -149,12 +155,17 @@ if args.list_cat:
     print_categories()
     exit()
 
+
 if not username:
     print(
         Fore.RED,
         "error, username not defined",
         Style.RESET_ALL,
     )
+    exit()
+
+if args.search_by_site:
+    search_by_site(username)
     exit()
 
 

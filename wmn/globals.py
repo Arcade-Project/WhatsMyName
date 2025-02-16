@@ -7,6 +7,7 @@ max_concurrent_threads = 100
 print_not_founds = False
 print_false_positives = False
 print_errors = False
+retesting_errors = False
 export_csv = False
 export_json = False
 username = ""

@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import json
 from colorama import init, Fore, Style
 
@@ -6,9 +7,9 @@ from colorama import init, Fore, Style
 def print_categories():
     # colorama init
     init()
-    current_directory = os.path.abspath(os.path.dirname(__file__))
-    parent_directory = os.path.dirname(current_directory)
-    file_path = os.path.join(parent_directory, "data", "wmn-data.json")
+    current_directory = Path(__file__).resolve().parent
+
+    file_path = current_directory.parent.parent / "data" / "wmn-data.json"
 
     if not os.path.exists(file_path):
         print(Fore.RED, "error wmn-data.json not found", Style.RESET_ALL)
